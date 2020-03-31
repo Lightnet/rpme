@@ -166,8 +166,6 @@ fn main() {
             }
         };
 
-
-
         if let Some(args) = e.update_args() {
             app.update(&args);
             dispatcher.dispatch(&mut world);

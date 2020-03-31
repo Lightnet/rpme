@@ -22,3 +22,31 @@ piston2d-opengl_graphics = "0.72.0"
 #[[example]]
 #name = "demo_window"
 #path = "examples/demo_window.rs"
+
+[[example]]
+name = "main_button"
+path = "examples/main_button.rs"
+
+[[example]]
+name = "main_hellotext"
+path = "examples/main_hellotext.rs"
+
+[[example]]
+name = "main_logo"
+path = "examples/main_logo.rs"
+
+[[example]]
+name = "main_rotatesqaure"
+path = "examples/main_rotatesqaure.rs"
+
+[[example]]
+name = "main_simple"
+path = "examples/main_simple.rs"
+
+[[example]]
+name = "main_test01"
+path = "examples/main_test01.rs"
+
+[[example]]
+name = "main_test02"
+path = "examples/main_test02.rs"
