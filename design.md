@@ -1,7 +1,4 @@
 
-
-
-
- * https://docs.rs/specs/0.16.1/specs/
- * 
- * 
+ 
+ # Information:
+  To build entity component system on piston.

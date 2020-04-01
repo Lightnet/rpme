@@ -10,6 +10,10 @@ extern crate opengl_graphics;
 extern crate piston;
 extern crate specs;
 
+mod components;
+
+use crate::components::*;
+
 use piston_window::*;
 use glutin_window::GlutinWindow as Window;
 use opengl_graphics::{GlGraphics, OpenGL};
@@ -166,11 +170,10 @@ fn main() {
             }
         };
 
-
-
         if let Some(args) = e.update_args() {
             app.update(&args);
-            dispatcher.dispatch(&mut world);
         }
+        dispatcher.dispatch(&mut world);
+        world.maintain();
     }
 }

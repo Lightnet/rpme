@@ -10,6 +10,7 @@ edition = "2018"
 
 [dependencies]
 specs = "0.16.1"
+specs-derive = "0.4.1"
 
 piston_window = "0.107.0"
 find_folder = "0.3.0"
