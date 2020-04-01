@@ -11,6 +11,7 @@ extern crate piston;
 extern crate specs;
 
 mod components;
+mod keyboard;
 
 use crate::components::*;
 
@@ -21,6 +22,14 @@ use piston::event_loop::{EventSettings, Events};
 use piston::input::{RenderArgs, RenderEvent, UpdateArgs, UpdateEvent};
 use piston::window::WindowSettings;
 use specs::prelude::*;
+
+
+pub enum MovementCommand {
+    Stop,
+    Move(Direction),
+}
+
+
 
 // A component contains data which is
 // associated with an entity.
@@ -126,10 +135,17 @@ fn main() {
     // logical dependencies on other systems.
     // Since we only have one, we don't depend on anything.
     // See the `full` example for dependencies.
-    let mut dispatcher = DispatcherBuilder::new().with(SysA, "sys_a", &[])
+    let mut dispatcher = DispatcherBuilder::new()
+        .with(SysA, "sys_a", &[])
+        .with(keyboard::Keyboard, "Keyboard", &[])
         .build();
     //init setup for all components loop
     dispatcher.setup(&mut world);
+
+    // Initialize resource
+    let movement_command: Option<MovementCommand> = None;
+    //world.add_resource(movement_command); //outdate
+    world.insert(movement_command); //update
 
     // This dispatches all the systems in parallel (but blocking).
     //dispatcher.dispatch(&mut world);
@@ -150,8 +166,13 @@ fn main() {
         rotation: 0.0,
     };
 
+    //let mut movement_command = None;
+
     let mut events = Events::new(EventSettings::new());
     while let Some(e) = events.next(&mut window) {
+        // None - no change, Some(MovementCommand) - perform movement
+        let mut movement_command: Option<MovementCommand> = None;
+
         if let Some(args) = e.render_args() {
             app.render(&args);
         }
@@ -167,13 +188,18 @@ fn main() {
         if let Some(button) = e.release_args() {
             if button == Button::Mouse(MouseButton::Left) {
                 println!("release left");
+                movement_command = Some(MovementCommand::Move(Direction::Left));
             }
         };
 
         if let Some(args) = e.update_args() {
             app.update(&args);
         }
+        *world.write_resource() = movement_command;
+
         dispatcher.dispatch(&mut world);
+        // Maintain dynamically added and removed entities in dispatch.
+        // This is what actually executes changes done by `LazyUpdate`.
         world.maintain();
     }
 }

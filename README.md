@@ -29,4 +29,6 @@
  * https://docs.rs/specs/0.16.1/specs/trait.RunNow.html
  * https://docs.rs/specs/0.16.1/specs/trait.System.html
  * https://sunjay.dev/learn-game-dev/ecs-keyboard-events.html
+ * http://kvark.github.io/ecs/rust/2017/03/08/specs.html
+ * 
  * 
