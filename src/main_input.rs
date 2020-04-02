@@ -73,32 +73,6 @@ impl<'a> System<'a> for SysA {
     }
 }
 
-struct GL{
-    gl: GlGraphics
-}
-
-impl Component for GL {
-    type Storage = VecStorage<Self>;
-}
-
-struct GLSystem {
-    gl:piston_window::OpenGL
-}
-
-impl GLSystem {
-    fn new(_gl:piston_window::OpenGL) -> Self {
-        Self { gl: _gl }
-    }
-}
-
-impl<'a> System<'a> for GLSystem {
-    type SystemData =  ReadStorage<'a, GL>;
-
-    fn run(&mut self, mut gl : Self::SystemData) {
-        //println!("gl?");
-    }
-}
-
 pub struct App {
     gl: GlGraphics, // OpenGL drawing backend.
     rotation: f64,  // Rotation for the square.
@@ -153,6 +127,26 @@ fn main() {
     // This entity does not have `Vel`, so it won't be dispatched.
     world.create_entity().with(Pos(2.0)).build();
 
+    // This builds a dispatcher.
+    // The third parameter of `add` specifies
+    // logical dependencies on other systems.
+    // Since we only have one, we don't depend on anything.
+    // See the `full` example for dependencies.
+    let mut dispatcher = DispatcherBuilder::new()
+        .with(SysA, "sys_a", &[])
+        .with(keyboard::Keyboard, "Keyboard", &[])
+        .build();
+    //init setup for all components loop
+    dispatcher.setup(&mut world);
+
+    // Initialize resource
+    let movement_command: Option<MovementCommand> = None;
+    //world.add_resource(movement_command); //outdate
+    world.insert(movement_command); //update
+
+    // This dispatches all the systems in parallel (but blocking).
+    //dispatcher.dispatch(&mut world);
+
     // Change this to OpenGL::V2_1 if not working.
     let opengl = OpenGL::V3_2;
 
@@ -168,27 +162,6 @@ fn main() {
         gl: GlGraphics::new(opengl),
         rotation: 0.0,
     };
-
-    // This builds a dispatcher.
-    // The third parameter of `add` specifies
-    // logical dependencies on other systems.
-    // Since we only have one, we don't depend on anything.
-    // See the `full` example for dependencies.
-    let mut dispatcher = DispatcherBuilder::new()
-        .with(SysA, "sys_a", &[])
-        .with(GLSystem::new(opengl), "GLSystem_a", &[])
-        .with(keyboard::Keyboard, "Keyboard", &[])
-        .build();
-    //init setup for all components loop
-    dispatcher.setup(&mut world);
-
-    // Initialize resource
-    let movement_command: Option<MovementCommand> = None;
-    //world.add_resource(movement_command); //outdate
-    world.insert(movement_command); //update
-
-    // This dispatches all the systems in parallel (but blocking).
-    //dispatcher.dispatch(&mut world);
 
     //let mut movement_command = None;
 
@@ -234,6 +207,7 @@ fn main() {
                 println!("release left");
                 movement_command = Some(MovementCommand::Move(Direction::Left));
             }
+
         };
 
         if let Some(args) = e.update_args() {
